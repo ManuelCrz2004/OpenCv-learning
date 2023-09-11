@@ -5,8 +5,6 @@ lower_yellow = (20, 120, 70)
 upper_yellow = (30, 255, 255)
 
 capture = cv.VideoCapture("Parqueadero.mp4")
-
-# def PlateAnalisis(frame, ScndBlank_img, contours):
     
     
 def detectPlate(frame, blank_img, second_blank_img):
@@ -20,26 +18,25 @@ def detectPlate(frame, blank_img, second_blank_img):
     # getting image contours
     contours, hierarchy = cv.findContours(threshold, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     
-    plates_contours = []
+    # plates_contours = []
     
-    for c in contours:
-        if cv.contourArea(c) > 2000:
-            plates_contours.append(c)
+    # for c in contours:
+    #     if cv.contourArea(c) > 2000:
+    #         plates_contours.append(c)
         
     # Drawing identified contours
     cv.drawContours(blank, contours, -1, (0, 0, 255), 1)
     cv.imshow("Contours image", blank)
     
-    for i in plates_contours:
+    for i in contours:
         plate_area = cv.contourArea(i)
         if plate_area > 2000:
-            plates_contours.append(i)
             x, y, w, h = cv.boundingRect(i)
             cropped_plate = frame[y:y+h, x:x+w]
             cv.rectangle(frame, (x,y), (x + w, y + h), (36, 255, 12), 2)
             
             
-    print(f"{plates_contours}")
+    print(f"{contours}")
     cv.imshow("Video", frame)
     cv.imshow("Cropped", cropped_plate)
     
