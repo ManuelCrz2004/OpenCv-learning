@@ -6,13 +6,10 @@ upper_yellow = (30, 255, 255)
 
 capture = cv.VideoCapture("Parqueadero.mp4")
 
-while True:
-    # getting photogram frame
-    isTrue, frame = capture.read()
+# def PlateAnalisis(frame, ScndBlank_img, contours):
     
-    # Creating blank
-    blank = np.zeros(frame.shape, dtype="uint8")
     
+def detectPlate(frame, blank_img, second_blank_img):
     # Convert into HSV format
     hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
     
@@ -22,31 +19,43 @@ while True:
     
     # getting image contours
     contours, hierarchy = cv.findContours(threshold, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    
+    plates_contours = []
+    
+    for c in contours:
+        if cv.contourArea(c) > 2000:
+            plates_contours.append(c)
         
-    # # Drawing identified contours
+    # Drawing identified contours
     cv.drawContours(blank, contours, -1, (0, 0, 255), 1)
     cv.imshow("Contours image", blank)
     
-    # Getting largest measure of contour
-    largest_contour = max(contours, key=cv.contourArea)
-    
-    # Drawing square at original video
-    cv.drawContours(frame, [largest_contour], -1, (0, 255, 0), 1)
-    
-    # Draw square around yellow square
-    x, y, w, h = cv.boundingRect(largest_contour)
-    cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    
-    # # Getting a new video screen
-    # new_video = cv.VideoWriter("zoomed_in.avi", cv.VideoWriter_fourcc('M','J','P','G'), 25, (w, h))
-    
-    # for i in range(0, h):
-    #     for j in range(0, w):
-    #         new_video.write(frame[y + i][x + j])
+    for i in plates_contours:
+        plate_area = cv.contourArea(i)
+        if plate_area > 2000:
+            plates_contours.append(i)
+            x, y, w, h = cv.boundingRect(i)
+            cropped_plate = frame[y:y+h, x:x+w]
+            cv.rectangle(frame, (x,y), (x + w, y + h), (36, 255, 12), 2)
             
-    # cv.imshow("zoomed plate video", new_video)
-    
+            
+    print(f"{plates_contours}")
     cv.imshow("Video", frame)
+    cv.imshow("Cropped", cropped_plate)
+    
+    
+
+
+while True:
+    # getting photogram frame
+    isTrue, frame = capture.read()
+    
+    # Creating necesary blank images
+    blank = np.zeros(frame.shape, dtype="uint8")
+    second_blank = np.zeros(frame.shape, dtype="uint8")
+    
+    detectPlate(frame, blank, second_blank)
+    
     
     if cv.waitKey(20) & 0xFF==ord('d'):
         break
