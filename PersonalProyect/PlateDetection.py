@@ -18,11 +18,16 @@ def detectPlate(frame, blank_img, second_blank_img):
     # getting image contours
     contours, hierarchy = cv.findContours(threshold, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     
-    # plates_contours = []
+    h, x, c = frame.shape
     
-    # for c in contours:
-    #     if cv.contourArea(c) > 2000:
-    #         plates_contours.append(c)
+    x1 = int(x/3)
+    x2 = (x1 * 2)
+    
+    y1 = int(h/3)
+    y2 = (y1 * 2)
+    
+    img_recortada = frame[y1:y2, x1:x2]
+    cv.imshow("Imagen recortada", img_recortada)
         
     # Drawing identified contours
     cv.drawContours(blank, contours, -1, (0, 0, 255), 1)
