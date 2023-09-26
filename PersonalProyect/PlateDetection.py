@@ -3,6 +3,8 @@ import numpy as np
 import pytesseract
 from PIL import Image
 
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR'
+
 lower_yellow = (20, 120, 70)
 upper_yellow = (30, 255, 255)
 
@@ -40,8 +42,8 @@ def detectPlate(frame, plate_image):
             x, y, w, h = cv.boundingRect(i)
             if plate_image == None:
                 plate_image = cv.imwrite("foto_vehiculo.jpg", frame[y-450:y+h+40, x-240:x+w+240])
-                id_vehiculo = pytesseract.image_to_string(Image.open("foto_vehiculo.jpg"))
-                print(id_vehiculo)
+                # id_vehiculo = pytesseract.image_to_string(Image.open("foto_vehiculo.jpg"))
+                # print(id_vehiculo)
             cv.rectangle(frame, (x, y), (x + w, y + h), (36, 255, 12), 2)
             
         
